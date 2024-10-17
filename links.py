@@ -3,12 +3,13 @@ from time import sleep
 import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
+# from selenium.webdriver.common.by import by
 from selenium.webdriver.support.select import Select
 
-service_obj = Service("D:/python_study/drivers/chromedriver.exe")
-driver = webdriver.Chrome(service=service_obj)
-driver.get("http://www.deadlinkcity.com/")
+# service_obj = Service("E:/python_study/pythonProject1/drivers/chromedriver.exe")
+driver = webdriver.Firefox()
+# driver= webdriver.Chrome("E:/python_study/Python_Selenium/chrome-win32/chrome-win32/chrome.exe")
+driver.get("https://www.google.com")
 driver.maximize_window()
 
 
@@ -23,8 +24,9 @@ for link in all_links:
         None
 
     if req.status_code >= 400:
-        print("broken links are", url)
-    else:
-        print("valid URls", url)
+        # print(req.status_code)
+        print("broken links are", url,req.status_code)
+    # else:
+    #     print("valid URls", url)
 
 driver.close()
