@@ -1,0 +1,8 @@
+<elements>
+    <element name="search_box">
+        <xpath>//input[@name='q']</xpath>
+    </element>
+    <element name="search_button">
+        <xpath>//input[@name='btnK']</xpath>
+    </element>
+</elements>
