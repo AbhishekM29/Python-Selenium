@@ -1,0 +1,57 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from lxml import etree
+import time
+
+class DynamicXPathBot:
+    def __init__(self, driver_path, xml_file):
+        # Initialize WebDriver and XML file
+        self.driver = webdriver.Chrome(executable_path=driver_path)
+        self.xml_file = xml_file
+        self.wait = WebDriverWait(self.driver, 10)
+
+    def load_xpaths(self):
+        # Load XPath expressions from XML file
+        tree = etree.parse(self.xml_file)
+        elements = tree.xpath("//element")
+        self.xpaths = {elem.get("name"): elem.xpath("xpath/text()")[0] for elem in elements}
+    
+    def open_page(self, url):
+        # Open the webpage
+        self.driver.get(url)
+        self.driver.maximize_window()
+
+    def find_dynamic_element(self, element_name):
+        # Get the XPath of the dynamic element
+        xpath = self.xpaths.get(element_name)
+        if xpath:
+            # Wait for the element to be present
+            return self.wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
+        else:
+            raise Exception(f"No XPath found for element: {element_name}")
+    
+    def perform_search(self, query):
+        # Locate and interact with dynamic elements
+        search_box = self.find_dynamic_element("search_box")
+        search_box.clear()
+        search_box.send_keys(query)
+        search_box.send_keys(Keys.RETURN)
+    
+    def close_browser(self):
+        # Close the browser
+        time.sleep(5)  # Just to observe the results before closing
+        self.driver.quit()
+
+if __name__ == "__main__":
+    DRIVER_PATH = "path/to/chromedriver"  # Replace with your actual ChromeDriver path
+    XML_FILE = "xpaths.xml"               # Make sure this is in the same directory as the script
+
+    bot = DynamicXPathBot(DRIVER_PATH, XML_FILE)
+    bot.load_xpaths()
+    bot.open_page("https://www.google.com")
+    bot.perform_search("Maharashtra tourist places")
+    bot.close_browser()
